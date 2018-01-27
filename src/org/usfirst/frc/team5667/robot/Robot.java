@@ -26,9 +26,9 @@ public class Robot extends IterativeRobot {
 	GyroscopeSPI gyro;
 //	UltrasonicSensor ultra;
 	Autonomous auto;
-	char allianceSwitch;
-	char scale;
-	char opponentSwitch;
+	public char allianceSwitch;
+	public char scale;
+	public char opponentSwitch;
 			//Game info
 	
 	
@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto"; //Custom auto command
 	private String m_autoSelected; 
 	private SendableChooser<String> m_chooser = new SendableChooser<>(); //Options for auto
-	private SendableChooser<Integer> position = new SendableChooser<>(); 
+	private SendableChooser<Integer> position = new SendableChooser<>(); //Options for robot position
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -52,7 +52,24 @@ public class Robot extends IterativeRobot {
 		gyro = new GyroscopeSPI();
 //		ultra = new UltrasonicSensor();
 		
-		String gameInfo = DriverStation.getInstance().getGameSpecificMessage();
+		String gameInfo = DriverStation.getInstance().getGameSpecificMessage().toLowerCase();
+		for (int i=0; i<3; i++) {
+			//LRR
+			char side = gameInfo.charAt(i); 
+			if (i==0)
+			{
+				allianceSwitch = side;
+			}
+			else if (i==1)
+			{
+				scale = side;
+			}
+			else if (i==2)
+			{
+				opponentSwitch = side;
+			}
+			
+		}
 		
 		//Add auto commands as options
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
@@ -84,6 +101,7 @@ public class Robot extends IterativeRobot {
 		//Get auto command chosen
 		m_autoSelected = m_chooser.getSelected();
 		System.out.println("Auto selected: " + m_autoSelected);
+		
 		auto = new Autonomous(this, position.getSelected());
 		System.out.println("Running position " + position.getSelected());
 		
