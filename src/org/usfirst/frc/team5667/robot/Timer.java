@@ -23,6 +23,12 @@ public class Timer {
 		}
 	}
 	
+	public double getElapsed() {
+		currentTime = System.currentTimeMillis();
+		elapsedTime = (int) (currentTime - initialTime);
+		return elapsedTime/1000.0;
+	}
+	
 	public boolean isDone() {
 		currentTime = System.currentTimeMillis();
 		elapsedTime = (int) (currentTime - initialTime);
