@@ -13,6 +13,10 @@ public class Timer {
 	
 	//Timer.isDone();
 	
+	public Timer() {
+		initialTime = System.currentTimeMillis();
+	}
+
 	public static void delay(double seconds) {
 		long start = System.currentTimeMillis();
 		int elapsed = 0;

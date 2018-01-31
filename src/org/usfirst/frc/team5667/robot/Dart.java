@@ -3,6 +3,7 @@ package org.usfirst.frc.team5667.robot;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.PWMTalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Dart {
 	
@@ -28,7 +29,7 @@ public class Dart {
 		
 		//Move actuator to towards that reading
 		boolean done = false;
-		
+		Timer timer = new Timer();
 		while (!done) {
 			//Get current reading
 			double curr = pot.getReading();
@@ -38,6 +39,7 @@ public class Dart {
 				motor.set(correct);
 			} else {
 				done = true;
+				SmartDashboard.putNumber("Time for DART motion", timer.getElapsed());
 			}
 		}
 	}
