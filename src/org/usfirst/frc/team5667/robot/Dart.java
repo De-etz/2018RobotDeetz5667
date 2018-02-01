@@ -20,10 +20,15 @@ public class Dart {
 	}
 	
 	public void extend(double value) {
-		double newValue = value*range+bottom;
+		if (0 <= value && value <= 1) {
+			double newValue = value*range+bottom;
+			set(newValue);
+		} else {
+			System.out.println("Invalid!");
+		}
 	}
 	
-	public void set(double target) {
+	private void set(double target) {
 		
 		final double kP = 1;
 		
@@ -33,12 +38,15 @@ public class Dart {
 		while (!done) {
 			//Get current reading
 			double curr = pot.getReading();
-			double err = target-curr;
-			if (Math.abs(err) > .01) {
+			double err = target-curr; //Process
+			SmartDashboard.putNumber("Error", err);
+			if (Math.abs(err) > .005) {
 				double correct = kP*err;
-				motor.set(correct);
+				SmartDashboard.putNumber("Correct", correct);
+				motor.set(correct); //Control
 			} else {
 				done = true;
+				motor.set(0);
 				SmartDashboard.putNumber("Time for DART motion", timer.getElapsed());
 			}
 		}

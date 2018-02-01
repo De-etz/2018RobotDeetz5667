@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team5667.robot;
 
+import java.util.Scanner;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,6 +31,7 @@ public class Robot extends IterativeRobot {
 	public char allianceSwitch;
 	public char scale;
 	public char opponentSwitch;
+	Dart dart;
 			//Game info
 	
 	
@@ -46,6 +49,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//Initialize subsystems
+		dart = new Dart(4, 0, .0015, .99);
 		xbox = new XboxController(0, this);
 		drive= new Drivetrain();
 		
@@ -55,19 +59,19 @@ public class Robot extends IterativeRobot {
 		String gameInfo = DriverStation.getInstance().getGameSpecificMessage().toLowerCase();
 		for (int i=0; i<3; i++) {
 			//LRR
-			char side = gameInfo.charAt(i); 
-			if (i==0)
-			{
-				allianceSwitch = side;
-			}
-			else if (i==1)
-			{
-				scale = side;
-			}
-			else if (i==2)
-			{
-				opponentSwitch = side;
-			}
+//			char side = gameInfo.charAt(i); 
+//			if (i==0)
+//			{
+//				allianceSwitch = side;
+//			}
+//			else if (i==1)
+//			{
+//				scale = side;
+//			}
+//			else if (i==2)
+//			{
+//				opponentSwitch = side;
+//			}
 			
 		}
 		
@@ -129,6 +133,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		dart.extend(.5);
+		Timer.delay(1);
 //		xbox.enableController();
 	}
 

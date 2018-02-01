@@ -95,33 +95,11 @@ public class XboxController extends Joystick {
 		} else 
 			robot.drive.stop();
 		
+	}
+	
+	public void test() {
+		updateController();
 		
-//		if (inputLSY > gDigit && inputRSX > gDigit) {
-//			driveTrain.forwardRightTurn(inputLSY, inputRSX);
-//		} else if (inputLSY > gDigit && inputRSX < -gDigit) {
-//			driveTrain.forwardLeftTurn(inputLSY, inputRSX);
-//		} else if (inputLSY < -gDigit && inputRSX > gDigit) {
-//			driveTrain.backwardRightTurn(inputLSY, inputRSX);
-//		} else if (inputLSY < -gDigit && inputRSX < -gDigit) {
-//			driveTrain.backwardLeftTurn(inputLSY, inputRSX);
-//		} else if (inputLSY > gDigit) {
-//			driveTrain.forward(inputLSY);
-//		} else if (inputLSY < -gDigit) {
-//			driveTrain.backward(-inputLSY);
-//		} else if (inputRSX > gDigit) {
-//			driveTrain.clockwise(inputRSX);
-//		} else if (inputRSX < -gDigit) {
-//			driveTrain.counterClockwise(-inputRSX);
-//		} else if (inputRT > gDigit) {
-//			driveTrain.strafeRight(.7);
-//		} else if (inputLT > gDigit) {
-//			driveTrain.strafeLeft(.7);
-//		} else if (inputRB) {
-//			driveTrain.strafeRight(.35);
-//		} else if (inputLB) {
-//			driveTrain.strafeLeft(.35);
-//		} else {
-//			driveTrain.stop();
-//		}
+		robot.dart.extend(inputLSY);
 	}
 }
