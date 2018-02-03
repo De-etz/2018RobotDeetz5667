@@ -9,8 +9,9 @@ public class Autonomous {
 		this.robot = robot;
 		this.position = position;
 		
-	}
-	
+	}	/**
+	 * This function is used to place the power cube on the switch during autonomous
+	 */
 	public void placeSwitch() {
 		
 		switch (position) {
@@ -86,7 +87,9 @@ public class Autonomous {
 			
 			//Drop cube
 	}
-	
+	/**
+	 * This function is used to place the power cube on the scale during autonomous
+	 */
 	public void placeScale() {
 		
 		//Position 0

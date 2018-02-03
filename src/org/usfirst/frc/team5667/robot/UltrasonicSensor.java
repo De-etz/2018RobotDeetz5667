@@ -23,7 +23,9 @@ public class UltrasonicSensor {
 		reading2 = 0;
 		inRange2 = false;
 	}
-	
+	/** 
+	 * This function updates the readinds with the current value returned from the sensors in inches
+	 */
 	private void updateSensor() {
 		reading1 = (int)sensor1.getRangeInches();
 		reading2 = (int)sensor2.getRangeInches();
@@ -38,23 +40,40 @@ public class UltrasonicSensor {
 			inRange2 = true;
 		}
 	}
-	
+	/**
+	 * This function returns reading 1
+	 * @return
+	 */
 	public int getReading1() {
 		updateSensor();
 		return reading1;
 	}
+	/**
+	 * This function returns reading 2
+	 * @return
+	 */
 	public int getReading2() {
 		updateSensor();
 		return reading2;
 	}
 	//Only call these two after the previous two
+	/** 
+	 * This function returns whether the current value of sensor 1 is in range
+	 * @return
+	 */
 	public boolean getRange1() {
 		return inRange1;
 	}
+	/** 
+	 * This function returns whether the current value of sensor 2 is in range
+	 * @return
+	 */
 	public boolean getRange2() {
 		return inRange2;
 	}
-	
+	/**
+	 * This function prints out the readings of both sensors
+	 */
 	public void displayReadings() {
 		if (Math.abs((int)sensor1.getRangeInches() - reading1) > 1 || 
 				Math.abs((int)sensor2.getRangeInches() - reading2) > 1) {
@@ -63,6 +82,10 @@ public class UltrasonicSensor {
 			System.out.println();
 		}
 	}
+	/**
+	 * This function returns the current alignment of the robot based on the reading
+	 * @return
+	 */
 	public int getAlignment() {
 		int alignment;
 		int difference = getReading1() - getReading2();
@@ -75,7 +98,10 @@ public class UltrasonicSensor {
 		}
 		return alignment;
 	}
-	
+	/**
+	 * This function uses the readings to get the difference of reading 1 and 2
+	 * @return
+	 */
 	public int getDefAlignment() {
 		int alignment;
 		double reading1 = getDefDistance1();
@@ -90,7 +116,10 @@ public class UltrasonicSensor {
 		}
 		return alignment;
 	}
-	
+	/**
+	 * skipped
+	 * @return
+	 */
 	public double getDefDistance1() {
 		HashMap<Double, Integer> readings = new HashMap<Double, Integer>(); //Distance, count
 		
@@ -117,6 +146,10 @@ public class UltrasonicSensor {
 		}
 		return defDistance;
 	}
+	/**
+	 * skipped
+	 * @return
+	 */
 	public double getDefDistance2() {
 		HashMap<Double, Integer> readings = new HashMap<Double, Integer>(); //Distance, count
 		

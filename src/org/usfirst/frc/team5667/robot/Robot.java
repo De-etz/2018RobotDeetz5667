@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,10 +29,11 @@ public class Robot extends IterativeRobot {
 	GyroscopeSPI gyro;
 //	UltrasonicSensor ultra;
 	Autonomous auto;
+	Dart dart;
+	
 	public char allianceSwitch;
 	public char scale;
 	public char opponentSwitch;
-	Dart dart;
 			//Game info
 	
 	
@@ -49,13 +51,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//Initialize subsystems
-		dart = new Dart(4, 0, .0015, .99);
-		xbox = new XboxController(0, this);
 		drive= new Drivetrain();
-		
+		dart = new Dart(4, 0, 1);
 		gyro = new GyroscopeSPI();
-//		ultra = new UltrasonicSensor();
+		xbox = new XboxController(0, this);
 		
+//		ultra = new UltrasonicSensor();
+		/**
+		 * This function is used to view which side is the allied side of the switch and scale.
+		 */
 		String gameInfo = DriverStation.getInstance().getGameSpecificMessage().toLowerCase();
 		for (int i=0; i<3; i++) {
 			//LRR
@@ -78,7 +82,7 @@ public class Robot extends IterativeRobot {
 		//Add auto commands as options
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
+//		SmartDashboard.putData("Auto choices", m_chooser);
 		
 		position.addDefault("Far left", 0);
 		position.addObject("Left", 1);
@@ -127,15 +131,23 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 	}
+	
+	@Override
+	public void teleopInit() {
+		dart.rextract();
+	}
 
 	/**
 	 * This function is called periodically during operator control.
 	 */
 	@Override
 	public void teleopPeriodic() {
-		dart.extend(.5);
-		Timer.delay(1);
-//		xbox.enableController();
+		xbox.enableController();
+		SmartDashboard.putBoolean("State", dart.extended);
+//		SmartDashboard.putBoolean("State", dart.extended);
+//		SmartDashboard.putNumber("Pot", pot.getReading());
+//		SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
+//		SmartDashboard.putNumber("speed", drive.updateSpeed());
 	}
 
 	/**

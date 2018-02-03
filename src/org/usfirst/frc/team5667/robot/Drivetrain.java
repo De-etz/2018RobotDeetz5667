@@ -9,6 +9,7 @@ public class Drivetrain {
 	private PWMTalonSRX l2;
 	private PWMTalonSRX r1;
 	private PWMTalonSRX r2;
+	PWMTalonSRX speed;
 	
 	/**
 	 * Initializes a drivetrain
@@ -30,6 +31,10 @@ public class Drivetrain {
 		r2.set(0);
 		
 	}
+	/**
+	 * 
+	 * @param speed The value of the speed of the robot
+	 */
 	public void forback(double speed){
 		l1.set(speed);
 		l2.set(speed);
@@ -37,6 +42,10 @@ public class Drivetrain {
 		r2.set(speed);
 		
 	}
+	/**
+	 * This function rotates the robot at a certain speed
+	 * @param speed The value of the speed at which the robot should turn
+	 */
 	public void rotate(double speed){
 		l1.set(speed);
 		l2.set(speed);
@@ -44,6 +53,11 @@ public class Drivetrain {
 		r2.set(-speed);
 	
 	}
+	/**
+	 * This function banks the robot in a certain direction at a certain speed
+	 * @param speed The value of the speed of the robot
+	 * @param turn The angle at which the robot is turning
+	 */
 	public void bank(double speed, double turn){
 		if (speed>=0 && turn>=0){ //forward to right
 			l1.set(speed);
@@ -66,6 +80,11 @@ public class Drivetrain {
 			r1.set(speed);
 			r2.set(speed);
 		}
+		
+		}
+	
+	public double updateSpeed() {
+		return speed.get();
 	}
 }
 

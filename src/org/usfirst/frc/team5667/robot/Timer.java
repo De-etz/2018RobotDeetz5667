@@ -16,7 +16,10 @@ public class Timer {
 	public Timer() {
 		initialTime = System.currentTimeMillis();
 	}
-
+    /**
+     * This function delays the timer 
+     * @param seconds This value is the amount of seconds that the timer is delayed by
+     */
 	public static void delay(double seconds) {
 		long start = System.currentTimeMillis();
 		int elapsed = 0;
@@ -26,13 +29,19 @@ public class Timer {
 			elapsed = (int) (current - start);
 		}
 	}
-	
+	/**
+	 * This function returns the elapsed time calculated by the timer
+	 * @return
+	 */
 	public double getElapsed() {
 		currentTime = System.currentTimeMillis();
 		elapsedTime = (int) (currentTime - initialTime);
 		return elapsedTime/1000.0;
 	}
-	
+	/**
+	 * This function is the variable that test whether the timer is done or not
+	 * @return
+	 */
 	public boolean isDone() {
 		currentTime = System.currentTimeMillis();
 		elapsedTime = (int) (currentTime - initialTime);
