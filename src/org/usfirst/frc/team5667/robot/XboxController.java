@@ -67,7 +67,7 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-			robot.dart.rextract();
+			
 			while (inputA) {
 				updateController();
 			}
@@ -88,18 +88,17 @@ public class XboxController extends Joystick {
 //		robot.dart.set(inputLSY);
 		
 		//Check joysticks
-//		if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)){
-//			System.out.println("BANK");
-//			robot.drive.bank(inputLSY, inputRSX);
-//		} else if (inputLSY > kGHOST || inputLSY < -kGHOST){
-//			System.out.println("FORBACK");
-//			robot.drive.forback(inputLSY);
-//		} else if (inputRSX > kGHOST || inputRSX < -kGHOST){
-//			System.out.println("ROTATE");
-//			robot.drive.rotate(inputRSX);
-//		} else 
-//			robot.drive.stop();
-//	robot.drive.updateSpeed();	
+		if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)){
+			System.out.println("BANK");
+			robot.drive.bank(inputLSY, inputRSX);
+		} else if (inputLSY > kGHOST || inputLSY < -kGHOST){
+			System.out.println("FORBACK");
+			robot.drive.forback(inputLSY);
+		} else if (inputRSX > kGHOST || inputRSX < -kGHOST){
+			System.out.println("ROTATE");
+			robot.drive.rotate(inputRSX);
+		} else 
+			robot.drive.stop();
 	}
 	
 	public void test() {

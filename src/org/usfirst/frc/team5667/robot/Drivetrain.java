@@ -1,14 +1,13 @@
 package org.usfirst.frc.team5667.robot;
 
 import edu.wpi.first.wpilibj.PWMTalonSRX;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Talon;
 
 public class Drivetrain {
 	//Declare subsystems
-	private PWMTalonSRX l1;
-	private PWMTalonSRX l2;
-	private PWMTalonSRX r1;
-	private PWMTalonSRX r2;
+	private Spark l1;
+	private Spark r1;
 	PWMTalonSRX speed;
 	
 	/**
@@ -16,19 +15,19 @@ public class Drivetrain {
 	 */
 	public Drivetrain() {
 		// initializes subsystems
-		l1 = new PWMTalonSRX(0);
-		l2 = new PWMTalonSRX(1);
-		r1 = new PWMTalonSRX(2);
-		r2 = new PWMTalonSRX(3);
+		l1 = new Spark(0);
+		//l2 = new Spark(2);
+		r1 = new Spark(1);
+		//r2 = new Spark(3);
 	}
 	/**
 	 * Stops the drivetrain
 	 */
 	public void stop(){
 		l1.set(0);
-		l2.set(0);
+		//l2.set(0);
 		r1.set(0);
-		r2.set(0);
+		//r2.set(0);
 		
 	}
 	/**
@@ -37,9 +36,9 @@ public class Drivetrain {
 	 */
 	public void forback(double speed){
 		l1.set(speed);
-		l2.set(speed);
+		//l2.set(speed);
 		r1.set(speed);
-		r2.set(speed);
+		//r2.set(speed);
 		
 	}
 	/**
@@ -48,9 +47,9 @@ public class Drivetrain {
 	 */
 	public void rotate(double speed){
 		l1.set(speed);
-		l2.set(speed);
+		//l2.set(speed);
 		r1.set(-speed);
-		r2.set(-speed);
+		//r2.set(-speed);
 	
 	}
 	/**
@@ -61,31 +60,28 @@ public class Drivetrain {
 	public void bank(double speed, double turn){
 		if (speed>=0 && turn>=0){ //forward to right
 			l1.set(speed);
-			l2.set(speed);
+			//l2.set(speed);
 			r1.set((1-turn)*speed);
-			r2.set((1-turn)*speed);
+			//r2.set((1-turn)*speed);
 	    } else if (speed<=0 && turn>=0){ //backward to right
 			l1.set(speed);
-			l2.set(speed);
+			//l2.set(speed);
 			r1.set((1-turn)*speed);
-			r2.set((1-turn)*speed);
+			//r2.set((1-turn)*speed);
 		} else if (speed>=0 && turn<=0){ //forward to the left
 			l1.set((1+turn)*speed);
-			l2.set((1+turn)*speed);
+			//l2.set((1+turn)*speed);
 			r1.set(speed);
-			r2.set(speed);
+			//r2.set(speed);
 		} else {//backward to the left
 			l1.set((1+turn)*speed);
-			l2.set((1+turn)*speed);
+			//l2.set((1+turn)*speed);
 			r1.set(speed);
-			r2.set(speed);
+			//r2.set(speed);
 		}
 		
-		}
-	
-	public double updateSpeed() {
-		return speed.get();
 	}
+	
 }
 
 

@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Dart {
 	
-	private Potentiometer pot;
-	private PWMTalonSRX motor;
+	public PWMTalonSRX motor;
 	public Hall max, min;
 	
 	private final double rextendspeed=0.5;
@@ -50,6 +49,11 @@ public class Dart {
 		}
 		System.out.println("Done retracting");
 		motor.set(0);
+	}
+	
+	public void disable() {
+		retract();
+		extended = false;
 	}
 }
 	

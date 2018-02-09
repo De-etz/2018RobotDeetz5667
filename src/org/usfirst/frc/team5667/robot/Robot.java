@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 	GyroscopeSPI gyro;
 //	UltrasonicSensor ultra;
 	Autonomous auto;
-	Dart dart;
+	Lift lift;
 	
 	public char allianceSwitch;
 	public char scale;
@@ -52,8 +52,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		//Initialize subsystems
 		drive= new Drivetrain();
-		dart = new Dart(4, 0, 1);
 		gyro = new GyroscopeSPI();
+		lift = new Lift();
 		xbox = new XboxController(0, this);
 		
 //		ultra = new UltrasonicSensor();
@@ -134,7 +134,7 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
-		dart.rextract();
+		lift.retractLower();
 	}
 
 	/**
@@ -143,17 +143,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		xbox.enableController();
-		SmartDashboard.putBoolean("State", dart.extended);
 //		SmartDashboard.putBoolean("State", dart.extended);
 //		SmartDashboard.putNumber("Pot", pot.getReading());
 //		SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 //		SmartDashboard.putNumber("speed", drive.updateSpeed());
 	}
 
-	/**
-	 * This function is called periodically during test mode.
-	 */
 	@Override
-	public void testPeriodic() {
+	public void disabledInit() {
+	    System.out.println("Default disabledInit() method... Overload me!");
+	    lift.lowerExt = true;
 	}
 }
