@@ -67,7 +67,7 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-			
+			robot.lift.rextract();
 			while (inputA) {
 				updateController();
 			}

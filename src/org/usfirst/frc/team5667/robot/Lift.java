@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5667.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Lift {
 
 	Dart lower1;
@@ -7,7 +9,7 @@ public class Lift {
 	Dart upper1;
 	Dart upper2;
 	
-	private final double rextendspeed=0.5;
+	private final double rextendspeed=0.3;
 	public boolean lowerExt;
 	public boolean upperExt;
 	
@@ -32,6 +34,8 @@ public class Lift {
 	
 	public void extendLower() {
 		System.out.println("Start extending...");
+		SmartDashboard.putBoolean("Higher 1", lower1.max.returnReading());
+		SmartDashboard.putBoolean("Higher 2", lower2.max.returnReading());
 		while (!lower1.max.returnReading() || !lower2.max.returnReading()) {
 			if (!lower1.max.returnReading()) {
 				lower1.motor.set(rextendspeed);
@@ -52,13 +56,15 @@ public class Lift {
 	public void retractLower() {
 		System.out.println("Start retracting...");
 		while (!lower1.min.returnReading() || !lower2.min.returnReading()) {
+			SmartDashboard.putBoolean("Lower 1", lower1.min.returnReading());
 			if (!lower1.min.returnReading()) {
-				lower1.motor.set(rextendspeed);
+				lower1.motor.set(-rextendspeed);
 			} else {
 				lower1.motor.set(0);
 			}
+			SmartDashboard.putBoolean("Lower 2", lower2.min.returnReading());
 			if (!lower2.min.returnReading()) {
-				lower2.motor.set(rextendspeed);
+				lower2.motor.set(-rextendspeed);
 			} else {
 				lower2.motor.set(0);
 			}
