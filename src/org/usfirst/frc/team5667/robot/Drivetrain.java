@@ -10,10 +10,14 @@ public class Drivetrain {
 	private Spark r1;
 	PWMTalonSRX speed;
 	
+	Robot robot;
+	
 	/**
 	 * Initializes a drivetrain
 	 */
-	public Drivetrain() {
+	public Drivetrain(Robot robot) {
+		
+		this.robot = robot;
 		// initializes subsystems
 		l1 = new Spark(0);
 		//l2 = new Spark(2);
@@ -52,6 +56,14 @@ public class Drivetrain {
 		//r2.set(-speed);
 	
 	}
+	
+	public void autoRotate(int degrees) {
+		double err = robot.gyro.getAngle()-degrees;
+		while (Math.abs(err) < 2) {
+			
+		}
+	}
+	
 	/**
 	 * This function banks the robot in a certain direction at a certain speed
 	 * @param speed The value of the speed of the robot

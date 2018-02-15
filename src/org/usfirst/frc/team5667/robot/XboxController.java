@@ -67,12 +67,15 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-			robot.lift.rextract();
+			robot.lift.rextractLower();
 			while (inputA) {
 				updateController();
 			}
 		} else if (inputB) {
-			
+			robot.lift.rextractUpper();
+			while (inputB) {
+				updateController();
+			}
 		} else if (inputX) {
 			
 		} else if (inputY) {
@@ -88,6 +91,7 @@ public class XboxController extends Joystick {
 //		robot.dart.set(inputLSY);
 		
 		//Check joysticks
+		/*
 		if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)){
 			System.out.println("BANK");
 			robot.drive.bank(inputLSY, inputRSX);
@@ -99,6 +103,21 @@ public class XboxController extends Joystick {
 			robot.drive.rotate(inputRSX);
 		} else 
 			robot.drive.stop();
+		*/
+		if (inputLSY > kGHOST || inputLSY < -kGHOST){
+			robot.lift.manualLower(inputLSY);
+		}
+		else
+		{
+			robot.lift.stopLower();
+		}
+		if (inputRSY > kGHOST || inputRSY < -kGHOST){
+			robot.lift.manualUpper(inputRSY);
+		}
+		else
+		{
+			robot.lift.stopUpper();
+		}
 	}
 	
 	public void test() {

@@ -6,12 +6,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Dart {
 	
 	public PWMTalonSRX motor;
-	public Hall max, min;
+	public Hall max, start, min;
 	
 	private final double rextendspeed=0.5;
 	public boolean extended;
 	
 	public Dart(int motor, int pinmin, int pinmax) {
+		max=new Hall(pinmax);
+		min=new Hall(pinmin);
+		this.motor = new PWMTalonSRX(motor);
+		extended = true;
+	}
+	public Dart(int motor, int pinmin, int start, int pinmax) {
 		max=new Hall(pinmax);
 		min=new Hall(pinmin);
 		this.motor = new PWMTalonSRX(motor);

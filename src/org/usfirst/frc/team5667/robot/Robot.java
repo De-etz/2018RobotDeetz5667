@@ -51,8 +51,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//Initialize subsystems
-		drive= new Drivetrain();
 		gyro = new GyroscopeSPI();
+		drive= new Drivetrain(this);
 		lift = new Lift();
 		xbox = new XboxController(0, this);
 		
@@ -80,16 +80,16 @@ public class Robot extends IterativeRobot {
 		}
 		
 		//Add auto commands as options
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
+//		m_chooser.addDefault("Default Auto", kDefaultAuto);
+//		m_chooser.addObject("My Auto", kCustomAuto);
 //		SmartDashboard.putData("Auto choices", m_chooser);
 		
-		position.addDefault("Far left", 0);
-		position.addObject("Left", 1);
-		position.addObject("Center", 2);
-		position.addObject("Right", 3);
-		position.addObject("Far right", 4);
-		SmartDashboard.putData("Robot Position", position);
+//		position.addDefault("Far left", 0);
+//		position.addObject("Left", 1);
+//		position.addObject("Center", 2);
+//		position.addObject("Right", 3);
+//		position.addObject("Far right", 4);
+//		SmartDashboard.putData("Robot Position", position);
 		
 	}
 
@@ -134,6 +134,7 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
+		lift.retractUpper();
 		lift.retractLower();
 	}
 
@@ -143,10 +144,19 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		xbox.enableController();
-//		SmartDashboard.putBoolean("State", dart.extended);
+//		
+//
+//		gyro.updateGyro();
+		lift.displayHallSensors();
 //		SmartDashboard.putNumber("Pot", pot.getReading());
 //		SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 //		SmartDashboard.putNumber("speed", drive.updateSpeed());
+	}
+	
+	@Override
+	public void disabledPeriodic() {
+		SmartDashboard.putBoolean("Opened", true);
+		gyro.updateGyro();
 	}
 
 	@Override
