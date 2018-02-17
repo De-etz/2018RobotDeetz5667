@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5667.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class XboxController extends Joystick {
 	Robot robot; //Robot
@@ -79,12 +80,17 @@ public class XboxController extends Joystick {
 		} else if (inputX) {
 			
 		} else if (inputY) {
-				
+			SmartDashboard.putBoolean("Y Button", inputY);
+			robot.claw.toggle();
+			while (inputY) {
+				updateController();
+			}
 		} else if (inputMenu) {
 
 		} else if (inputStart) {
 
 		} else {
+			SmartDashboard.putBoolean("Y Button", inputY);
 			
 		}
 		

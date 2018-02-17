@@ -28,6 +28,7 @@ public class Robot extends IterativeRobot {
 	Drivetrain drive;
 	GyroscopeSPI gyro;
 //	UltrasonicSensor ultra;
+	Claw claw;
 	Autonomous auto;
 	Lift lift;
 	
@@ -54,6 +55,7 @@ public class Robot extends IterativeRobot {
 		gyro = new GyroscopeSPI();
 		drive= new Drivetrain(this);
 		lift = new Lift();
+		claw = new Claw();
 		xbox = new XboxController(0, this);
 		
 //		ultra = new UltrasonicSensor();
@@ -134,8 +136,8 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
-		lift.retractUpper();
-		lift.retractLower();
+//		lift.retractUpper();
+//		lift.retractLower();
 	}
 
 	/**

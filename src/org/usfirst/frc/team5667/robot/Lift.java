@@ -9,7 +9,7 @@ public class Lift {
 	Dart upper1;
 	Dart upper2;
 	private int extendTime;
-	private final double rextendSpeed=0.3;
+	private final double rextendSpeed=0.6;
 	public boolean lowerExt;
 	public boolean upperExt;
 	
@@ -38,9 +38,55 @@ public class Lift {
 		}
 	}
 	public void manualLower(double speed) {
-		
-//		lower1.motor.set(.6*speed);
-		lower2.motor.set(.6*speed);
+		SmartDashboard.putNumber("Speed", speed);
+		if (speed < 0) {
+			if (!lower1.min.returnReading()) {
+				if (speed > -.35) {
+					SmartDashboard.putString("Actuator 1:", "Slow");
+					lower1.motor.set(-.3);
+				} else {
+					SmartDashboard.putString("Actuator 1:", "FAST");
+					lower1.motor.set(speed);
+				}				
+			} else {
+				lower1.motor.set(0);
+			}
+			if (!lower2.min.returnReading()) {
+				if (speed > -.35) {
+					SmartDashboard.putString("Actuator 2:", "Slow");
+					lower2.motor.set(-.3);
+				} else {
+					SmartDashboard.putString("Actuator 2:", "FAST");
+					lower2.motor.set(speed);
+				}
+				
+			} else {
+				lower2.motor.set(0);
+			}
+		} else {
+			if (!lower1.max.returnReading()) {
+				if (speed < .35) {
+					SmartDashboard.putString("Actuator 1:", "Slow");
+					lower1.motor.set(.3);
+				} else {
+					SmartDashboard.putString("Actuator 1:", "FAST");
+					lower1.motor.set(speed);
+				}
+			} else {
+				lower1.motor.set(0);
+			}
+			if (!lower2.max.returnReading()) {
+				if (speed < .35) {
+					SmartDashboard.putString("Actuator 2:", "Slow");
+					lower2.motor.set(.3);
+				} else {
+					SmartDashboard.putString("Actuator 2:", "FAST");
+					lower2.motor.set(speed);
+				}
+			} else {
+				lower2.motor.set(0);
+			}
+		}
 		
 //		if (!lower1.max.returnReading() && !lower1.min.returnReading()) {
 //			lower1.motor.set(.6*speed);
@@ -85,6 +131,8 @@ public class Lift {
 	}
 	public void stopLower()
 	{
+		SmartDashboard.putString("Actuator 1:", "Stopped");
+		SmartDashboard.putString("Actuator 2:", "Stopped");
 		lower1.motor.set(0);
 		lower2.motor.set(0);
 	}
@@ -114,6 +162,7 @@ public class Lift {
 		System.out.println("Done extending");
 	}
 	public void displayHallSensors() {
+		
 		SmartDashboard.putBoolean("Hall1 min",lower1.min.returnReading());
 		SmartDashboard.putBoolean("Hall1 max",lower1.max.returnReading());
 		SmartDashboard.putBoolean("Hall2 min",lower2.min.returnReading());
@@ -122,6 +171,8 @@ public class Lift {
 		SmartDashboard.putBoolean("Hall3 max",upper1.max.returnReading());
 		SmartDashboard.putBoolean("Hall4 min",upper2.min.returnReading());
 		SmartDashboard.putBoolean("Hall4 max",upper2.max.returnReading());
+		SmartDashboard.putBoolean("Lower Arm State", lowerExt);
+		SmartDashboard.putBoolean("Upper Arm State", upperExt);
 	}
 	public void coordinatedMovement() {
 		

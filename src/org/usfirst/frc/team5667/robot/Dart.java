@@ -12,7 +12,7 @@ public class Dart {
 	public boolean extended;
 	
 	public Dart(int motor, int pinmin, int pinmax) {
-		max=new Hall(pinmax);
+		max=new Hall(pinmax);// hi deetz here and i suck
 		min=new Hall(pinmin);
 		this.motor = new PWMTalonSRX(motor);
 		extended = true;
