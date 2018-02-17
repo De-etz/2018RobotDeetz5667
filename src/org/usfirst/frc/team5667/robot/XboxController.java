@@ -12,6 +12,7 @@ public class XboxController extends Joystick {
 	private double inputRT, inputLT; //Trigger values
 	private boolean inputRB, inputLB; //Bumper states
 	private boolean inputA, inputB, inputX, inputY, inputMenu, inputStart; //Button states
+	private boolean drive;
 	private final double kGHOST = .15; //Threshold for blocking ghost signals
 	
 	/**
@@ -35,6 +36,7 @@ public class XboxController extends Joystick {
 		inputY = false;
 		inputMenu = false;
 		inputStart = false;
+		drive = true;
 		
 		this.robot = robot; //Robot
 	}
@@ -69,24 +71,19 @@ public class XboxController extends Joystick {
 		//Check buttons
 		if (inputA) {
 			robot.lift.rextractLower();
-			while (inputA) {
-				updateController();
-			}
+			while (inputA) updateController();
 		} else if (inputB) {
 			robot.lift.rextractUpper();
-			while (inputB) {
-				updateController();
-			}
+			while (inputB) updateController();
 		} else if (inputX) {
 			
 		} else if (inputY) {
 			SmartDashboard.putBoolean("Y Button", inputY);
 			robot.claw.toggle();
-			while (inputY) {
-				updateController();
-			}
+			while (inputY) updateController();
 		} else if (inputMenu) {
-
+			drive = !drive;
+			while (inputMenu) updateController();
 		} else if (inputStart) {
 
 		} else {
@@ -97,33 +94,34 @@ public class XboxController extends Joystick {
 //		robot.dart.set(inputLSY);
 		
 		//Check joysticks
-		/*
-		if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)){
-			System.out.println("BANK");
-			robot.drive.bank(inputLSY, inputRSX);
-		} else if (inputLSY > kGHOST || inputLSY < -kGHOST){
-			System.out.println("FORBACK");
-			robot.drive.forback(inputLSY);
-		} else if (inputRSX > kGHOST || inputRSX < -kGHOST){
-			System.out.println("ROTATE");
-			robot.drive.rotate(inputRSX);
-		} else 
-			robot.drive.stop();
-		*/
-		if (inputLSY > kGHOST || inputLSY < -kGHOST){
-			robot.lift.manualLower(inputLSY);
-		}
-		else
-		{
-			robot.lift.stopLower();
-		}
-		if (inputRSY > kGHOST || inputRSY < -kGHOST){
-			robot.lift.manualUpper(inputRSY);
-		}
-		else
-		{
+		
+		if (drive) {
 			robot.lift.stopUpper();
+			if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)){
+				robot.drive.bank(inputLSY, inputRSX);
+			} else if (inputLSY > kGHOST || inputLSY < -kGHOST){
+				robot.drive.forback(inputLSY);
+			} else if (inputRSX > kGHOST || inputRSX < -kGHOST){
+				robot.drive.rotate(inputRSX);
+			} else robot.drive.stop();
+		} else {
+			robot.drive.stop();
+			if (inputLSY > kGHOST || inputLSY < -kGHOST){
+				robot.lift.manualLower(inputLSY);
+			}
+			else
+			{
+				robot.lift.stopLower();
+			}
+			if (inputRSY > kGHOST || inputRSY < -kGHOST){
+				robot.lift.manualUpper(inputRSY);
+			}
+			else
+			{
+				robot.lift.stopUpper();
+			}
 		}
+		
 	}
 	
 	public void test() {
