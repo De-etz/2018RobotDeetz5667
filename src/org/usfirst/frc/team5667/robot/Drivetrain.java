@@ -50,9 +50,9 @@ public class Drivetrain {
 	 * @param speed The value of the speed at which the robot should turn
 	 */
 	public void rotate(double speed){
-		l1.set(speed);
+		l1.set(.6*speed);
 		//l2.set(speed);
-		r1.set(-speed);
+		r1.set(.6*-speed);
 		//r2.set(-speed);
 	
 	}
@@ -71,6 +71,7 @@ public class Drivetrain {
 	 */
 	public void bank(double speed, double turn){
 		if (speed>=0 && turn>=0){ //forward to right
+			System.out.println("AJEE broke the rpbpt");
 			l1.set(speed);
 			//l2.set(speed);
 			r1.set((1-turn)*speed);

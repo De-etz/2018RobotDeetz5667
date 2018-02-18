@@ -246,4 +246,16 @@ public class Lift {
 		System.out.println("Done retracting");
 	}
 
+	public void raiseLift() {
+		while (!lower1.max.returnReading() || !lower2.max.returnReading()) {
+			manualLower(.4);
+			manualUpper(.7);
+		}
+		stopLower();
+		while(!upper1.max.returnReading() || !upper2.max.returnReading()) {
+			manualUpper(1);
+		}
+		stopUpper();
+	}
+
 }

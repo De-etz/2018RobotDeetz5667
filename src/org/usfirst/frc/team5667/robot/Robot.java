@@ -7,6 +7,9 @@
 
 package org.usfirst.frc.team5667.robot;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -138,6 +141,8 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 //		lift.retractUpper();
 //		lift.retractLower();
+		
+		
 	}
 
 	/**
@@ -149,7 +154,7 @@ public class Robot extends IterativeRobot {
 //		
 //
 //		gyro.updateGyro();
-		lift.displayHallSensors();
+//		lift.displayHallSensors();
 //		SmartDashboard.putNumber("Pot", pot.getReading());
 //		SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 //		SmartDashboard.putNumber("speed", drive.updateSpeed());
