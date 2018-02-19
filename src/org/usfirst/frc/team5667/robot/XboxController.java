@@ -90,7 +90,8 @@ public class XboxController extends Joystick {
 				if (inputX) {
 					break;
 				}
-				move(inputLSY);
+		    	robot.lift.manualLower(inputLSY);
+		    	robot.lift.manualLower(inputLSX);
 				lower.put(t, inputLSY);
 				upper.put(t, inputRSY);
 				Timer.delay(tStep);
@@ -112,7 +113,8 @@ public class XboxController extends Joystick {
 			    	double lowerValue = Double.parseDouble(line.substring(0, line.indexOf(",")));
 			    	double upperValue = Double.parseDouble(line.substring(line.indexOf(",")+1));
 			    	
-			    	move(lowerValue);
+			    	robot.lift.manualLower(lowerValue);
+			    	robot.lift.manualLower(upperValue);
 			    	
 			        sb.append(line);
 			        sb.append(System.lineSeparator());
