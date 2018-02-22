@@ -8,6 +8,8 @@ public class Lift {
 	Dart lower2;
 	Dart upper1;
 	Dart upper2;
+	Hall startHall;
+	Hall upperHall;
 	private int extendTime;
 	private final double rextendSpeed=0.6;
 	public boolean lowerExt;
@@ -18,9 +20,19 @@ public class Lift {
 		lower2 = new Dart(5, 2, 3);
 		upper1 = new Dart(6, 4, 5);//was 6,4,5
 		upper2 = new Dart(7, 6, 7);
+		startHall = new Hall(8);
+		upperHall = new Hall(9);
 		
 		lowerExt = true;
 		extendTime = 10;
+	}
+	
+	public void toStart() {
+		while (!startHall.returnReading()) {
+			manualLower(-.5);
+		}
+		manualUpper(-1);
+		Timer.delay(.5);
 	}
 	
 	public void rextractLower() {
@@ -37,7 +49,8 @@ public class Lift {
 			extendUpper();
 		}
 	}
-	public void manualLower(double speed) {
+	public boolean manualLower(double speed) {
+		speed*=-1;
 		SmartDashboard.putNumber("Speed", speed);
 		if (speed < 0) {
 			if (!lower1.min.returnReading()) {
@@ -63,6 +76,7 @@ public class Lift {
 			} else {
 				lower2.motor.set(0);
 			}
+			return (lower1.min.returnReading() && lower2.min.returnReading());
 		} else {
 			if (!lower1.max.returnReading()) {
 				if (speed < .35) {
@@ -86,21 +100,11 @@ public class Lift {
 			} else {
 				lower2.motor.set(0);
 			}
+			return (lower1.max.returnReading() && lower2.max.returnReading());
 		}
 		
-//		if (!lower1.max.returnReading() && !lower1.min.returnReading()) {
-//			lower1.motor.set(.6*speed);
-//		} else {
-//			lower1.motor.set(0);
-//		}
-//		if (!lower2.max.returnReading() && !lower2.min.returnReading()) {
-//			lower2.motor.set(.6*speed);
-//		} else {
-//			lower2.motor.set(0);
-//		}
-		
 	}
-	public void manualUpper(double speed) {
+	public boolean manualUpper(double speed) {
 		if (speed < 0) {
 			if (!upper1.min.returnReading()) {
 				upper1.motor.set(.6*speed);
@@ -113,6 +117,7 @@ public class Lift {
 			} else {
 				upper2.motor.set(0);
 			}
+			return (upper1.min.returnReading() && upper2.min.returnReading());
 		} else {
 			if (!upper1.max.returnReading()) {
 				upper1.motor.set(.6*speed);
@@ -125,6 +130,7 @@ public class Lift {
 			} else {
 				upper2.motor.set(0);
 			}
+			return (upper1.max.returnReading() && upper2.max.returnReading());
 		}
 		
 		
@@ -245,17 +251,75 @@ public class Lift {
 		upperExt = false;
 		System.out.println("Done retracting");
 	}
-
-	public void raiseLift() {
-		while (!lower1.max.returnReading() || !lower2.max.returnReading()) {
-			manualLower(.4);
-			manualUpper(.7);
+	
+	public void scale_start() {
+		System.out.println("Going down...");
+		
+		while (!manualLower(-.3));	
+		Timer.delay(.2);
+		while (!upperHall.returnReading()) {
+			manualUpper(-.8);
+		}
+		while (!startHall.returnReading()) {
+			manualUpper(-.75);
+			manualLower(.5);
 		}
 		stopLower();
-		while(!upper1.max.returnReading() || !upper2.max.returnReading()) {
+		while (!manualUpper(-.8)) {
+		}
+		stopUpper();
+		System.out.println("Done.");
+	}
+	
+	public void start_scale() {
+		System.out.println("Going up...");
+		while (!manualLower(-.4)) {
+			manualUpper(.7);
+		}
+		while (!manualUpper(1)) {
+		}
+		manualLower(.3);
+		Timer.delay(.1);
+		while (!startHall.returnReading()) {
+			manualLower(.6);
+		}
+		stopLower();
+		stopUpper();
+		System.out.println("Done.");
+	}
+	
+	public void start_ground() {
+//		System.out.println("Dropping down...");
+//		while (!upperHall.returnReading()) {
+//			manualUpper(1);
+//		}
+//		while (!manualUpper(-.5) || manual) {
+//			manualLower(.4);	
+//			manualUpper(-.5);
+//		}
+	}
+	
+	public void start_switch() {
+		while (!upperHall.returnReading()) {
 			manualUpper(1);
 		}
 		stopUpper();
 	}
+	
+	public void switch_start() {
+		while (!manualUpper(-1));
+	}
+
+//	public void start_up() {
+//		while (!lower1.max.returnReading() || !lower2.max.returnReading()) {
+//			manualLower(.4);
+//			manualUpper(.7);
+//		}
+//		stopLower();
+//		while(!upper1.max.returnReading() || !upper2.max.returnReading()) {
+//			manualUpper(1);
+//		}
+//		stopUpper();
+//	}
 
 }

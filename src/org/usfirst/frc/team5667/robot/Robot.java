@@ -12,9 +12,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -29,7 +32,8 @@ public class Robot extends IterativeRobot {
 	//Declare subsystems
 	XboxController xbox;
 	Drivetrain drive;
-	GyroscopeSPI gyro;
+	GyroscopeSPI gyroSPI;
+	Gyro gyroAna;
 //	UltrasonicSensor ultra;
 	Claw claw;
 	Autonomous auto;
@@ -55,11 +59,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//Initialize subsystems
-		gyro = new GyroscopeSPI();
+		gyroSPI = new GyroscopeSPI();
+		gyroAna = new AnalogGyro(0);
 		drive= new Drivetrain(this);
 		lift = new Lift();
 		claw = new Claw();
 		xbox = new XboxController(0, this);
+		gyroAna.calibrate();
+		CameraServer.getInstance().startAutomaticCapture();
 		
 //		ultra = new UltrasonicSensor();
 		/**
@@ -139,6 +146,7 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
+//		gyroSPI.reset();
 //		lift.retractUpper();
 //		lift.retractLower();
 		
@@ -150,11 +158,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+//		gyroSPI.updateGyro();
+//		if (lift.startHall.returnReading()) {
+//			gyroSPI.reset();
+//		}
 		xbox.enableController();
 //		
 //
 //		gyro.updateGyro();
-//		lift.displayHallSensors();
+		lift.displayHallSensors();
 //		SmartDashboard.putNumber("Pot", pot.getReading());
 //		SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 //		SmartDashboard.putNumber("speed", drive.updateSpeed());
@@ -163,7 +175,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic() {
 		SmartDashboard.putBoolean("Opened", true);
-		gyro.updateGyro();
+		gyroSPI.updateGyro();
 	}
 
 	@Override

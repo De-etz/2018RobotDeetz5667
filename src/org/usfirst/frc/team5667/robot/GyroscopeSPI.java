@@ -32,8 +32,8 @@ public class GyroscopeSPI {
 		angle = (int)(angle *10);
 		angle = angle /10.0;
 		rate = ((int)(gyro.getRate()*10))/10.0;
-		SmartDashboard.putNumber("Gyro value", angle);
-		SmartDashboard.putNumber("Gyro rate", rate);
+		SmartDashboard.putNumber("SPI Gyro value", angle);
+		SmartDashboard.putNumber("SPI Gyro rate", rate);
 	}
 	/**
 	 * This function returns the value of the gyro

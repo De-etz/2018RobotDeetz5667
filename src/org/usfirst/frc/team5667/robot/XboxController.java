@@ -21,8 +21,11 @@ public class XboxController extends Joystick {
 	private double inputRT, inputLT; //Trigger values
 	private boolean inputRB, inputLB; //Bumper states
 	private boolean inputA, inputB, inputX, inputY, inputMenu, inputStart; //Button states
+	private Object[] controls = {inputLSX, inputLSY, inputRSX, inputRSY, inputRT, inputLT, inputRB, inputLB, 
+			inputA, inputB, inputX, inputY, inputMenu, inputStart};
 	private boolean drive;
-	private final double kGHOST = .15; //Threshold for blocking ghost signals
+	private final double kGHOST = .1; //Threshold for blocking ghost signals
+	private final double tStep = .01;
 	
 	/**
 	 * Initializes an Xbox controller.
@@ -70,70 +73,78 @@ public class XboxController extends Joystick {
 		inputStart = super.getRawButton(7);
 	}
 	
-	public void copycat() {
+	public void recall(String command) {
+
+		System.out.println("Starting recall...");
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("/home/lvuser/" + command + ".txt"));
+		    StringBuilder sb = new StringBuilder();
+		    String line = br.readLine();
+		    
+		    while (line != null) {
+		    	int prev = -1;
+		    	for (int i = 0; i < controls.length; i++) {
+		    		if (i > 5) {
+		    			controls[i] = Boolean.parseBoolean(line.substring(prev+1, line.indexOf(",", prev+1)));
+		    		} else {
+		    			controls[i] = Double.parseDouble(line.substring(prev+1, line.indexOf(",", prev+1)));
+		    		}		    		
+		    	}
+		    	
+		    	enableController();
+		    	
+				sb.append(line);
+		        sb.append(System.lineSeparator());
+		        line = br.readLine();
+		        Timer.delay(tStep);
+		    }
+		    String everything = sb.toString();
+		    System.out.println(everything);
+		    br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Done recalling.");
+		
+	}
+	
+	public void copycat(String command) {
 		System.out.println("Starting...");
-		HashMap<Double, Double> lower = new HashMap<Double, Double>();
-		HashMap<Double, Double> upper = new HashMap<Double, Double>();
 //		double stop = input;
-		double tStep = .05;
 		
 		try {
-			File file = new File("/home/lvuser/joysticks.txt");
+			File file = new File("/home/lvuser/"+command+".txt");
 			file.createNewFile();
 			FileWriter writer = new FileWriter(file);
-		
+
 			for (double t = 0; t != -1; t+=tStep) {
 				t = Math.round(t*100)/100.0;
-				SmartDashboard.putNumber("Time:", t);
 				System.out.println(t);
 				updateController();
-				if (inputX) {
+				if (inputRB) {
 					break;
 				}
-		    	robot.lift.manualLower(inputLSY);
-		    	robot.lift.manualLower(inputLSX);
-				lower.put(t, inputLSY);
-				upper.put(t, inputRSY);
+				enableController();
+//				if (inputLSY > kGHOST || inputLSY < -kGHOST) robot.lift.manualLower(inputLSY);
+//				else robot.lift.stopLower();
+//				
+//				if (inputRSY > kGHOST || inputRSY < -kGHOST) robot.lift.manualUpper(inputRSY);
+//				else robot.lift.stopUpper();
 				Timer.delay(tStep);
 				
-				writer.write(inputLSY + "," + inputRSY + "\n");
+				for (Object input : controls) {
+					writer.write(input + ",");
+				}
+				writer.write("\n");
 				
 			} 
-
-			System.out.println("Done, starting copy...");
-			Timer.delay(3);
 			writer.close();
-			
-			BufferedReader br = new BufferedReader(new FileReader("/home/lvuser/joysticks.txt"));
-			try {
-			    StringBuilder sb = new StringBuilder();
-			    String line = br.readLine();
-			    
-			    while (line != null) {
-			    	double lowerValue = Double.parseDouble(line.substring(0, line.indexOf(",")));
-			    	double upperValue = Double.parseDouble(line.substring(line.indexOf(",")+1));
-			    	
-			    	robot.lift.manualLower(lowerValue);
-			    	robot.lift.manualLower(upperValue);
-			    	
-			        sb.append(line);
-			        sb.append(System.lineSeparator());
-			        line = br.readLine();
-			        Timer.delay(tStep);
-			    }
-			    String everything = sb.toString();
-			    System.out.println(everything);
-			} finally {
-			    br.close();
-			}
-			
-			
-			
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 		}
-		
+		System.out.println("Done copying.");
 		
 //		System.out.println("Lower: " + lower.toString());
 //		System.out.println("Upper: " + upper.toString());
@@ -148,25 +159,28 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-//			robot.lift.rextractLower();
-			robot.claw.toggle();
+			robot.lift.start_switch();
 			while (inputA) updateController();
-		} else if (inputB) {
-//			robot.lift.rextractUpper();
-			System.out.println("B");
-			copycat();
+		} else if (inputB) {	
+			robot.lift.switch_start();
 			while (inputB) updateController();
 		} else if (inputX) {
-			robot.lift.raiseLift();
+			robot.lift.start_scale();
 			while (inputX) updateController();
 		} else if (inputY) {
-			
+			robot.lift.scale_start();
 			while (inputY) updateController();
 		} else if (inputMenu) {
 			drive = !drive;
 			while (inputMenu) updateController();
-		} else if (inputStart) {
+		} else if (inputLB) {
+			robot.claw.toggle();
+			while (inputLB) updateController();
+		} else if (inputRB) {
 			
+			while (inputRB) updateController();
+		} else if (inputStart) {
+			robot.claw.toggle();
 			while (inputStart) updateController();
 		} else {
 			
@@ -184,7 +198,7 @@ public class XboxController extends Joystick {
 				SmartDashboard.putString("DriveState", "Bank");
 			}
 			else if (inputLSY > kGHOST || inputLSY < -kGHOST) {
-				robot.drive.forback(inputLSY*.5);
+				robot.drive.forback(inputLSY);
 				SmartDashboard.putString("Drive", "Forback");
 			}
 			else if (inputRSX > kGHOST || inputRSX < -kGHOST) {

@@ -58,7 +58,7 @@ public class Drivetrain {
 	}
 	
 	public void autoRotate(int degrees) {
-		double err = robot.gyro.getAngle()-degrees;
+		double err = robot.gyroSPI.getAngle()-degrees;
 		while (Math.abs(err) < 2) {
 			
 		}
