@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import org.usfirst.frc.team5667.robot.Lift.State;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -81,6 +83,8 @@ public class XboxController extends Joystick {
 		    StringBuilder sb = new StringBuilder();
 		    String line = br.readLine();
 		    
+		    while (inputRB) updateController();
+		    
 		    while (line != null) {
 		    	int prev = -1;
 		    	for (int i = 0; i < controls.length; i++) {
@@ -117,7 +121,9 @@ public class XboxController extends Joystick {
 			File file = new File("/home/lvuser/"+command+".txt");
 			file.createNewFile();
 			FileWriter writer = new FileWriter(file);
-
+			
+			while (inputLB) updateController();
+			
 			for (double t = 0; t != -1; t+=tStep) {
 				t = Math.round(t*100)/100.0;
 				System.out.println(t);
@@ -125,17 +131,43 @@ public class XboxController extends Joystick {
 				if (inputRB) {
 					break;
 				}
+				
+				System.out.print(inputLSX + ", ");
+				writer.write(inputLSX + ",");
+				System.out.print(inputRSX + ", ");
+				writer.write(inputRSX + ",");
+				System.out.print(inputRSY + ", ");
+				writer.write(inputRSY + ",");
+				System.out.print(inputRT + ", ");
+				writer.write(inputRT + ",");
+				System.out.print(inputLT + ", ");
+				writer.write(inputLT + ",");
+				System.out.print(inputRB + ", ");
+				writer.write(inputRB + ",");
+				System.out.print(inputLB + ", ");
+				writer.write(inputLB + ",");
+				System.out.print(inputA + ", ");
+				writer.write(inputA + ",");
+				System.out.print(inputB + ", ");
+				writer.write(inputB + ",");
+				System.out.print(inputX + ", ");
+				writer.write(inputX + ",");
+				System.out.print(inputY + ", ");
+				writer.write(inputY + ",");
+				System.out.print(inputMenu + ", ");
+				writer.write(inputMenu + ",");
+				System.out.print(inputStart + ", ");
+				writer.write(inputStart + ",");
+				
 				enableController();
 //				if (inputLSY > kGHOST || inputLSY < -kGHOST) robot.lift.manualLower(inputLSY);
 //				else robot.lift.stopLower();
 //				
 //				if (inputRSY > kGHOST || inputRSY < -kGHOST) robot.lift.manualUpper(inputRSY);
 //				else robot.lift.stopUpper();
-				Timer.delay(tStep);
+				Timer.delay(tStep);				
 				
-				for (Object input : controls) {
-					writer.write(input + ",");
-				}
+				//	System.out.println();
 				writer.write("\n");
 				
 			} 
@@ -145,6 +177,8 @@ public class XboxController extends Joystick {
 				e.printStackTrace();
 		}
 		System.out.println("Done copying.");
+
+		while (inputRB) updateController();
 		
 //		System.out.println("Lower: " + lower.toString());
 //		System.out.println("Upper: " + upper.toString());
@@ -159,29 +193,57 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-			robot.lift.start_switch();
+			robot.drive.rotate(.4);
+			Timer.delay(1);
+//			robot.claw.toggle();
 			while (inputA) updateController();
-		} else if (inputB) {	
-			robot.lift.switch_start();
+		} else if (inputB) {
+			if (robot.lift.state == State.START) {
+				robot.lift.start_ground();
+			} else if (robot.lift.state == State.GROUND) {
+				robot.lift.ground_start();
+			} else {
+				System.out.println("Invalid position: " + robot.lift.state);
+			}
 			while (inputB) updateController();
 		} else if (inputX) {
-			robot.lift.start_scale();
+			if (robot.lift.state == State.START) {
+				robot.lift.start_switch();
+			} else if (robot.lift.state == State.SWITCH) {
+				robot.lift.switch_start();
+			} else {
+				System.out.println("Invalid position: " + robot.lift.state);
+			}
 			while (inputX) updateController();
 		} else if (inputY) {
-			robot.lift.scale_start();
+			if (robot.lift.state == State.START) {
+				robot.lift.start_scale();
+			} else if (robot.lift.state == State.SCALE) {
+				robot.lift.scale_start();
+			} else {
+				System.out.println("Invalid position: " + robot.lift.state);
+			}
 			while (inputY) updateController();
 		} else if (inputMenu) {
-			drive = !drive;
+			
 			while (inputMenu) updateController();
+		} else if (inputStart) {
+			while (inputStart) updateController();
+			Timer timer = new Timer(1);
+			while (!timer.isDone()) {
+				updateController();
+				if (inputStart) {
+					drive = !drive;
+					break;
+				}
+			}
+			while (inputStart) updateController();
 		} else if (inputLB) {
-			robot.claw.toggle();
+			copycat("temp");
 			while (inputLB) updateController();
 		} else if (inputRB) {
-			
+			recall("temp");
 			while (inputRB) updateController();
-		} else if (inputStart) {
-			robot.claw.toggle();
-			while (inputStart) updateController();
 		} else {
 			
 		}
@@ -204,8 +266,7 @@ public class XboxController extends Joystick {
 			else if (inputRSX > kGHOST || inputRSX < -kGHOST) {
 				SmartDashboard.putString("Drive", "Rotate");
 				robot.drive.rotate(inputRSX*.8);
-			}
-			else {
+			} else {
 				robot.drive.stop();
 				SmartDashboard.putString("Drive", "Stop");
 			}

@@ -10,10 +10,17 @@ public class Lift {
 	Dart upper2;
 	Hall startHall;
 	Hall upperHall;
+	Hall lowerHall;
 	private int extendTime;
 	private final double rextendSpeed=0.6;
 	public boolean lowerExt;
 	public boolean upperExt;
+	
+	public State state;
+	
+	public enum State {
+		START, SWITCH, SCALE, GROUND
+	}
 	
 	public Lift() {
 		lower1 = new Dart(4, 0, 1);
@@ -25,6 +32,8 @@ public class Lift {
 		
 		lowerExt = true;
 		extendTime = 10;
+		
+		state = State.START;
 	}
 	
 	public void toStart() {
@@ -253,73 +262,96 @@ public class Lift {
 	}
 	
 	public void scale_start() {
-		System.out.println("Going down...");
 		
-		while (!manualLower(-.3));	
-		Timer.delay(.2);
-		while (!upperHall.returnReading()) {
-			manualUpper(-.8);
+		if (state == State.SCALE) {
+			System.out.println("Going to START");
+			
+			while (!manualLower(-.3));	
+			Timer.delay(.2);
+			while (!upperHall.returnReading()) {
+				manualUpper(-.8);
+			}
+			while (!startHall.returnReading()) {
+				manualUpper(-.75);
+				manualLower(.5);
+			}
+			stopLower();
+			while (!manualUpper(-.8)) {
+			}
+			stopUpper();
+			System.out.println("Done.");
+		} else {
+			System.out.println("Not in SCALE position");
 		}
-		while (!startHall.returnReading()) {
-			manualUpper(-.75);
-			manualLower(.5);
-		}
-		stopLower();
-		while (!manualUpper(-.8)) {
-		}
-		stopUpper();
-		System.out.println("Done.");
+		
+		
 	}
 	
 	public void start_scale() {
-		System.out.println("Going up...");
-		while (!manualLower(-.4)) {
-			manualUpper(.7);
-		}
-		while (!manualUpper(1)) {
-		}
-		manualLower(.3);
-		Timer.delay(.1);
-		while (!startHall.returnReading()) {
-			manualLower(.6);
-		}
-		stopLower();
-		stopUpper();
-		System.out.println("Done.");
+		
+		if (state == State.START) {
+			System.out.println("Going to SCALE");
+			while (!manualLower(-.4)) {
+				manualUpper(.7);
+			}
+			while (!manualUpper(1)) {
+			}
+			manualLower(.3);
+			Timer.delay(.1);
+			while (!startHall.returnReading()) {
+				manualLower(.6);
+			}
+			stopLower();
+			stopUpper();
+			System.out.println("Done.");
+		} else {
+			System.out.println("Not in START position");
+		}		
+		
 	}
 	
 	public void start_ground() {
-//		System.out.println("Dropping down...");
-//		while (!upperHall.returnReading()) {
-//			manualUpper(1);
-//		}
-//		while (!manualUpper(-.5) || manual) {
-//			manualLower(.4);	
-//			manualUpper(-.5);
-//		}
+		if (state == State.START) {
+			System.out.println("Going to GROUND");
+			while (!manualLower(.5));
+			stopLower();
+		} else {
+			System.out.println("Not in START position");
+		}
+	}
+	
+	public void ground_start() {
+		if (state == State.START) {
+			System.out.println("Going to START");
+			while (!startHall.returnReading()) { 
+				manualLower(-.6);
+			}
+			stopLower();
+		} else {
+			System.out.println("Not in GROUND position");
+		}
 	}
 	
 	public void start_switch() {
-		while (!upperHall.returnReading()) {
-			manualUpper(1);
+		if (state == State.START) {
+			System.out.println("Going to SWITCH");
+			while (!upperHall.returnReading()) {
+				manualUpper(1);
+			}
+			stopUpper();
+		} else {
+			System.out.println("Not in START position");
 		}
-		stopUpper();
+		
 	}
 	
 	public void switch_start() {
-		while (!manualUpper(-1));
+		if (state == State.SWITCH) {
+			System.out.println("Going to START");
+			while (!manualUpper(-1));
+		} else {
+			System.out.println("Not in SWITCH position");
+		}
 	}
-
-//	public void start_up() {
-//		while (!lower1.max.returnReading() || !lower2.max.returnReading()) {
-//			manualLower(.4);
-//			manualUpper(.7);
-//		}
-//		stopLower();
-//		while(!upper1.max.returnReading() || !upper2.max.returnReading()) {
-//			manualUpper(1);
-//		}
-//		stopUpper();
-//	}
 
 }
