@@ -58,7 +58,7 @@ public class XboxController extends Joystick {
 	/**
 	 * Reads all the button and joystick values from the controller.
 	 */
-	private void updateController() {
+	public void updateController() {
 		inputRSX = super.getRawAxis(4);
 		inputRSY = -super.getRawAxis(5);
 		inputLSX = super.getRawAxis(0);
@@ -87,13 +87,51 @@ public class XboxController extends Joystick {
 		    
 		    while (line != null) {
 		    	int prev = -1;
-		    	for (int i = 0; i < controls.length; i++) {
-		    		if (i > 5) {
-		    			controls[i] = Boolean.parseBoolean(line.substring(prev+1, line.indexOf(",", prev+1)));
-		    		} else {
-		    			controls[i] = Double.parseDouble(line.substring(prev+1, line.indexOf(",", prev+1)));
-		    		}		    		
-		    	}
+		    	int curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputLSX = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputLSY = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputRSX = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputRSY = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputRT = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputLT = Double.parseDouble(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputRB = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputLB = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputA = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputB = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputX = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputY = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputMenu = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	inputStart = Boolean.parseBoolean(line.substring(prev+1, curr));
+		    	prev = curr;
+		    	curr = line.indexOf(",", prev+1);
+		    	System.out.println("Done writing");
 		    	
 		    	enableController();
 		    	
@@ -134,6 +172,8 @@ public class XboxController extends Joystick {
 				
 				System.out.print(inputLSX + ", ");
 				writer.write(inputLSX + ",");
+				System.out.print(inputLSY + ", ");
+				writer.write(inputLSY + ",");
 				System.out.print(inputRSX + ", ");
 				writer.write(inputRSX + ",");
 				System.out.print(inputRSY + ", ");
@@ -189,7 +229,7 @@ public class XboxController extends Joystick {
 	 */
 	public void enableController() {
 		//Check the values of the controller
-		updateController(); // Hey Deetz I'm typing this on an Xbox Controller! 
+		 // Hey Deetz I'm typing this on an Xbox Controller! 
 		
 		//Check buttons
 		if (inputA) {

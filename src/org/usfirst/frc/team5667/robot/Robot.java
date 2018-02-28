@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot {
 		claw = new Claw();
 		xbox = new XboxController(0, this);
 		gyroAna.calibrate();
-		CameraServer.getInstance().startAutomaticCapture();
+//		CameraServer.getInstance().startAutomaticCapture();
 		
 //		ultra = new UltrasonicSensor();
 		/**
@@ -162,6 +162,7 @@ public class Robot extends IterativeRobot {
 //		if (lift.startHall.returnReading()) {
 //			gyroSPI.reset();
 //		}
+		xbox.updateController();
 		xbox.enableController();
 //		
 //
