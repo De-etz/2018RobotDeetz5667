@@ -11,6 +11,7 @@ public class Lift {
 	Hall startHall;
 	Hall upperHall;
 	Hall lowerHall;
+	HallAnalog switchHall;
 	private int extendTime;
 	private final double rextendSpeed=0.6;
 	public boolean lowerExt;
@@ -29,6 +30,7 @@ public class Lift {
 		upper2 = new Dart(7, 6, 7);
 		startHall = new Hall(8);
 		upperHall = new Hall(9);
+		switchHall = new HallAnalog(1);
 		
 		lowerExt = true;
 		extendTime = 10;
@@ -179,10 +181,13 @@ public class Lift {
 	public void displayHallSensors() {
 		
 		SmartDashboard.putBoolean("Hall1 min",lower1.min.returnReading());
+		SmartDashboard.putBoolean("Start Hall",startHall.returnReading());
 		SmartDashboard.putBoolean("Hall1 max",lower1.max.returnReading());
 		SmartDashboard.putBoolean("Hall2 min",lower2.min.returnReading());
 		SmartDashboard.putBoolean("Hall2 max",lower2.max.returnReading());
 		SmartDashboard.putBoolean("Hall3 min",upper1.min.returnReading());
+		SmartDashboard.putBoolean("Upper Hall",upperHall.returnReading());
+		SmartDashboard.putBoolean("Switch Hall",switchHall.returnReading());
 		SmartDashboard.putBoolean("Hall3 max",upper1.max.returnReading());
 		SmartDashboard.putBoolean("Hall4 min",upper2.min.returnReading());
 		SmartDashboard.putBoolean("Hall4 max",upper2.max.returnReading());
@@ -292,13 +297,16 @@ public class Lift {
 		if (state == State.START) {
 			System.out.println("Going to SCALE");
 			while (!manualLower(-.4)) {
-				manualUpper(.7);
+				SmartDashboard.putString("Up state:", "Lean back");
+				manualUpper(.8);
 			}
 			while (!manualUpper(1)) {
+				SmartDashboard.putString("Up state:", "Rise");
 			}
 			manualLower(.3);
 			Timer.delay(.1);
 			while (!startHall.returnReading()) {
+				SmartDashboard.putString("Up state:", "Straighten");
 				manualLower(.6);
 			}
 			stopLower();
@@ -321,10 +329,10 @@ public class Lift {
 	}
 	
 	public void ground_start() {
-		if (state == State.START) {
+		if (state == State.GROUND) {
 			System.out.println("Going to START");
 			while (!startHall.returnReading()) { 
-				manualLower(-.6);
+				manualLower(-.5);
 			}
 			stopLower();
 		} else {
@@ -335,8 +343,9 @@ public class Lift {
 	public void start_switch() {
 		if (state == State.START) {
 			System.out.println("Going to SWITCH");
-			while (!upperHall.returnReading()) {
-				manualUpper(1);
+			while (!switchHall.returnReading()) {
+				manualLower(-.4);
+				manualUpper(.8);
 			}
 			stopUpper();
 		} else {
@@ -348,7 +357,18 @@ public class Lift {
 	public void switch_start() {
 		if (state == State.SWITCH) {
 			System.out.println("Going to START");
-			while (!manualUpper(-1));
+
+			while (!upperHall.returnReading()) {
+				manualUpper(-.8);
+			}
+			while (!startHall.returnReading()) {
+				manualUpper(-.75);
+				manualLower(.5);
+			}
+			stopLower();
+			while (!manualUpper(-.8)) {
+			}
+			
 		} else {
 			System.out.println("Not in SWITCH position");
 		}

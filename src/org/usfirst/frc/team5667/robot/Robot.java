@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot {
 		claw = new Claw();
 		xbox = new XboxController(0, this);
 		gyroAna.calibrate();
-//		CameraServer.getInstance().startAutomaticCapture();
+		CameraServer.getInstance().startAutomaticCapture();
 		
 //		ultra = new UltrasonicSensor();
 		/**
@@ -119,22 +119,29 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		//Get auto command chosen
-		m_autoSelected = m_chooser.getSelected();
-		System.out.println("Auto selected: " + m_autoSelected);
+//		m_autoSelected = m_chooser.getSelected();
+//		System.out.println("Auto selected: " + m_autoSelected);
+//		
+//		auto = new Autonomous(this, position.getSelected());
+//		System.out.println("Running position " + position.getSelected());
+//		
+//		//Run auto command
+//		switch (m_autoSelected) {
+//			case kCustomAuto:
+//				// Put custom auto code here
+//				break;
+//			case kDefaultAuto:
+//			default:
+//				// Put default auto code here
+//				break;
+//		}
+		Timer timer = new Timer(4);
+		while (!timer.isDone()) {
+
+			drive.forback(.4);
+		} 
+			drive.stop();
 		
-		auto = new Autonomous(this, position.getSelected());
-		System.out.println("Running position " + position.getSelected());
-		
-		//Run auto command
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
 	}
 
 	/**
@@ -142,6 +149,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		
 	}
 	
 	@Override

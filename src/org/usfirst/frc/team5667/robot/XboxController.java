@@ -27,7 +27,7 @@ public class XboxController extends Joystick {
 			inputA, inputB, inputX, inputY, inputMenu, inputStart};
 	private boolean drive;
 	private final double kGHOST = .1; //Threshold for blocking ghost signals
-	private final double tStep = .01;
+	private final double tStep = .001;
 	
 	/**
 	 * Initializes an Xbox controller.
@@ -233,33 +233,39 @@ public class XboxController extends Joystick {
 		
 		//Check buttons
 		if (inputA) {
-			robot.drive.rotate(.4);
-			Timer.delay(1);
-//			robot.claw.toggle();
+			robot.claw.toggle();
 			while (inputA) updateController();
 		} else if (inputB) {
 			if (robot.lift.state == State.START) {
 				robot.lift.start_ground();
+				robot.lift.state = State.GROUND;
 			} else if (robot.lift.state == State.GROUND) {
 				robot.lift.ground_start();
+				robot.lift.state = State.START;
 			} else {
 				System.out.println("Invalid position: " + robot.lift.state);
 			}
 			while (inputB) updateController();
 		} else if (inputX) {
+			
 			if (robot.lift.state == State.START) {
 				robot.lift.start_switch();
+				robot.lift.state = State.SWITCH;
 			} else if (robot.lift.state == State.SWITCH) {
 				robot.lift.switch_start();
+				robot.lift.state = State.START;
 			} else {
 				System.out.println("Invalid position: " + robot.lift.state);
 			}
+			
 			while (inputX) updateController();
 		} else if (inputY) {
 			if (robot.lift.state == State.START) {
 				robot.lift.start_scale();
+				robot.lift.state = State.SCALE;
 			} else if (robot.lift.state == State.SCALE) {
 				robot.lift.scale_start();
+				robot.lift.state = State.START;
 			} else {
 				System.out.println("Invalid position: " + robot.lift.state);
 			}
@@ -294,6 +300,15 @@ public class XboxController extends Joystick {
 		
 		
 		if (drive) {
+			SmartDashboard.putString("Drive Speed", "FAST");
+			if (robot.lift.state == robot.lift.state.SCALE || robot.lift.state == robot.lift.state.SWITCH) {
+				inputLSY*=.5;
+				inputRSX*=.5;//ajee
+				SmartDashboard.putString("Drive Speed", "SLOW");
+				
+			}
+			
+			
 			robot.lift.stopUpper();
 			if ((inputLSY > kGHOST || inputLSY < -kGHOST) && (inputRSX > kGHOST || inputRSX < -kGHOST)) {
 				robot.drive.bank(inputLSY, inputRSX);
