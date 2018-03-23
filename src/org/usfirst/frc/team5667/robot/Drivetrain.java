@@ -15,13 +15,13 @@ public class Drivetrain {
 	/**
 	 * Initializes a drivetrain
 	 */
-	public Drivetrain(Robot robot) {
+	public Drivetrain() {
 		
 		this.robot = robot;
 		// initializes subsystems
 		l1 = new Spark(0);
-		//l2 = new Spark(2);
-		r1 = new Spark(1);
+		//l2 = new Spark(1);
+		r1 = new Spark(2);
 		//r2 = new Spark(3);
 	}
 	/**
@@ -50,18 +50,11 @@ public class Drivetrain {
 	 * @param speed The value of the speed at which the robot should turn
 	 */
 	public void rotate(double speed){
-		l1.set(.6*speed);
+		l1.set(speed);
 		//l2.set(speed);
-		r1.set(.6*-speed);
+		r1.set(-speed);
 		//r2.set(-speed);
 	
-	}
-	
-	public void autoRotate(int degrees) {
-		double err = robot.gyroSPI.getAngle()-degrees;
-		while (Math.abs(err) < 2) {
-			
-		}
 	}
 	
 	/**
@@ -71,7 +64,6 @@ public class Drivetrain {
 	 */
 	public void bank(double speed, double turn){
 		if (speed>=0 && turn>=0){ //forward to right
-			System.out.println("AJEE broke the rpbpt");
 			l1.set(speed);
 			//l2.set(speed);
 			r1.set((1-turn)*speed);

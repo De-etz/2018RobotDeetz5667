@@ -12,9 +12,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -32,12 +36,12 @@ public class Robot extends IterativeRobot {
 	//Declare subsystems
 	XboxController xbox;
 	Drivetrain drive;
-	GyroscopeSPI gyroSPI;
-	Gyro gyroAna;
 //	UltrasonicSensor ultra;
 	Claw claw;
 	Autonomous auto;
 	Lift lift;
+	AHRS gyro;
+	AnalogPotentiometer left, right;
 	
 	public char allianceSwitch;
 	public char scale;
@@ -59,37 +63,21 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//Initialize subsystems
-		gyroSPI = new GyroscopeSPI();
-		gyroAna = new AnalogGyro(0);
-		drive= new Drivetrain(this);
-		lift = new Lift();
+		gyro = new AHRS(I2C.Port.kMXP);
+		drive= new Drivetrain();
 		claw = new Claw();
+		lift = new Lift(this);
 		xbox = new XboxController(0, this);
-		gyroAna.calibrate();
 		CameraServer.getInstance().startAutomaticCapture();
+		gyro.reset();
+
+		left = new AnalogPotentiometer(4);
+		right = new AnalogPotentiometer(5);
 		
 //		ultra = new UltrasonicSensor();
 		/**
 		 * This function is used to view which side is the allied side of the switch and scale.
 		 */
-		String gameInfo = DriverStation.getInstance().getGameSpecificMessage().toLowerCase();
-		for (int i=0; i<3; i++) {
-			//LRR
-//			char side = gameInfo.charAt(i); 
-//			if (i==0)
-//			{
-//				allianceSwitch = side;
-//			}
-//			else if (i==1)
-//			{
-//				scale = side;
-//			}
-//			else if (i==2)
-//			{
-//				opponentSwitch = side;
-//			}
-			
-		}
 		
 		//Add auto commands as options
 //		m_chooser.addDefault("Default Auto", kDefaultAuto);
@@ -118,6 +106,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+
+		String gameInfo = DriverStation.getInstance().getGameSpecificMessage().toLowerCase();
+		if (gameInfo != null && gameInfo.length() > 0) {
+			allianceSwitch = gameInfo.charAt(0);
+			scale = gameInfo.charAt(1);
+			opponentSwitch = gameInfo.charAt(2);
+		}
+		
 		//Get auto command chosen
 //		m_autoSelected = m_chooser.getSelected();
 //		System.out.println("Auto selected: " + m_autoSelected);
@@ -135,12 +131,33 @@ public class Robot extends IterativeRobot {
 //				// Put default auto code here
 //				break;
 //		}
+		
+		//Dumb switch
+		if (allianceSwitch == 'r') {
+			System.out.println("YEE");
+			drive.forback(.4);
+			Timer.delay(.3);
+			lift.start_switch();
+			Timer timer = new Timer(1);
+			while (!timer.isDone()) {
+				drive.forback(.4);
+			} 
+			drive.stop();
+			claw.toggle();
+		} else {
+			Timer timer = new Timer(4);
+			while (!timer.isDone()) {
+				drive.forback(.4);
+			} 
+			drive.stop();
+		}
+		
+		//Baseline
 		Timer timer = new Timer(4);
 		while (!timer.isDone()) {
-
 			drive.forback(.4);
-		} 
-			drive.stop();
+		}
+		drive.stop();
 		
 	}
 
@@ -157,7 +174,7 @@ public class Robot extends IterativeRobot {
 //		gyroSPI.reset();
 //		lift.retractUpper();
 //		lift.retractLower();
-		
+		gyro.reset();
 		
 	}
 
@@ -166,14 +183,28 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-//		gyroSPI.updateGyro();
-//		if (lift.startHall.returnReading()) {
-//			gyroSPI.reset();
-//		}
-		xbox.updateController();
-		xbox.enableController();
-//		
-//
+		if (gyro.getRoll() < 75) {
+			drive.forback(-.3);
+		} else {
+			xbox.refreshController();
+			xbox.enableController();
+		}
+		
+		SmartDashboard.putNumber("Pitch:", gyro.getPitch());
+		SmartDashboard.putNumber("Roll:", gyro.getRoll());
+		SmartDashboard.putNumber("X angle:", gyro.getRawGyroX());
+		SmartDashboard.putNumber("Y angle:", gyro.getRawGyroY());
+		SmartDashboard.putNumber("Z angle:", gyro.getRawGyroZ());
+		SmartDashboard.putNumber("X Displacement:", gyro.getDisplacementX());
+		SmartDashboard.putNumber("Y Displacement:", gyro.getDisplacementY());
+		SmartDashboard.putNumber("Z Displacement:", gyro.getDisplacementZ());
+
+		SmartDashboard.putNumber("Left Pot", left.get());
+		SmartDashboard.putNumber("Left Pot PID", left.pidGet());
+		SmartDashboard.putNumber("Right Pot", right.get());
+		SmartDashboard.putNumber("Right Pot PID", right.pidGet());
+
+
 //		gyro.updateGyro();
 		lift.displayHallSensors();
 //		SmartDashboard.putNumber("Pot", pot.getReading());
@@ -183,8 +214,14 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void disabledPeriodic() {
-		SmartDashboard.putBoolean("Opened", true);
-		gyroSPI.updateGyro();
+		
+		SmartDashboard.putNumber("Pitch:", gyro.getPitch());
+		SmartDashboard.putNumber("X angle:", gyro.getQuaternionX());
+		SmartDashboard.putNumber("Y angle:", gyro.getQuaternionY());
+		SmartDashboard.putNumber("Z angle:", gyro.getQuaternionZ());
+		SmartDashboard.putNumber("X Displacement:", gyro.getDisplacementX());
+		SmartDashboard.putNumber("Y Displacement:", gyro.getDisplacementY());
+		SmartDashboard.putNumber("Z Displacement:", gyro.getDisplacementZ());
 	}
 
 	@Override

@@ -17,29 +17,35 @@ public class Lift {
 	public boolean lowerExt;
 	public boolean upperExt;
 	
+	Robot robot;
+	
 	public State state;
 	
 	public enum State {
 		START, SWITCH, SCALE, GROUND
 	}
 	
-	public Lift() {
+	public Lift(Robot robot) {
 		lower1 = new Dart(4, 0, 1);
 		lower2 = new Dart(5, 2, 3);
 		upper1 = new Dart(6, 4, 5);//was 6,4,5
 		upper2 = new Dart(7, 6, 7);
-		startHall = new Hall(8);
-		upperHall = new Hall(9);
+		startHall = new Hall(9);
+		upperHall = new Hall(8);
 		switchHall = new HallAnalog(1);
 		
 		lowerExt = true;
 		extendTime = 10;
 		
+		this.robot = robot;
 		state = State.START;
 	}
 	
 	public void toStart() {
 		while (!startHall.returnReading()) {
+			if (robot.xbox.inputMenu) {
+				break;
+			}
 			manualLower(-.5);
 		}
 		manualUpper(-1);
@@ -62,14 +68,11 @@ public class Lift {
 	}
 	public boolean manualLower(double speed) {
 		speed*=-1;
-		SmartDashboard.putNumber("Speed", speed);
 		if (speed < 0) {
 			if (!lower1.min.returnReading()) {
 				if (speed > -.35) {
-					SmartDashboard.putString("Actuator 1:", "Slow");
 					lower1.motor.set(-.3);
 				} else {
-					SmartDashboard.putString("Actuator 1:", "FAST");
 					lower1.motor.set(speed);
 				}				
 			} else {
@@ -77,10 +80,8 @@ public class Lift {
 			}
 			if (!lower2.min.returnReading()) {
 				if (speed > -.35) {
-					SmartDashboard.putString("Actuator 2:", "Slow");
 					lower2.motor.set(-.3);
 				} else {
-					SmartDashboard.putString("Actuator 2:", "FAST");
 					lower2.motor.set(speed);
 				}
 				
@@ -91,10 +92,8 @@ public class Lift {
 		} else {
 			if (!lower1.max.returnReading()) {
 				if (speed < .35) {
-					SmartDashboard.putString("Actuator 1:", "Slow");
 					lower1.motor.set(.3);
 				} else {
-					SmartDashboard.putString("Actuator 1:", "FAST");
 					lower1.motor.set(speed);
 				}
 			} else {
@@ -102,10 +101,8 @@ public class Lift {
 			}
 			if (!lower2.max.returnReading()) {
 				if (speed < .35) {
-					SmartDashboard.putString("Actuator 2:", "Slow");
 					lower2.motor.set(.3);
 				} else {
-					SmartDashboard.putString("Actuator 2:", "FAST");
 					lower2.motor.set(speed);
 				}
 			} else {
@@ -148,8 +145,6 @@ public class Lift {
 	}
 	public void stopLower()
 	{
-		SmartDashboard.putString("Actuator 1:", "Stopped");
-		SmartDashboard.putString("Actuator 2:", "Stopped");
 		lower1.motor.set(0);
 		lower2.motor.set(0);
 	}
@@ -191,8 +186,6 @@ public class Lift {
 		SmartDashboard.putBoolean("Hall3 max",upper1.max.returnReading());
 		SmartDashboard.putBoolean("Hall4 min",upper2.min.returnReading());
 		SmartDashboard.putBoolean("Hall4 max",upper2.max.returnReading());
-		SmartDashboard.putBoolean("Lower Arm State", lowerExt);
-		SmartDashboard.putBoolean("Upper Arm State", upperExt);
 	}
 	public void coordinatedMovement() {
 		
@@ -271,17 +264,34 @@ public class Lift {
 		if (state == State.SCALE) {
 			System.out.println("Going to START");
 			
-			while (!manualLower(-.3));	
+			while (!manualLower(-.3)) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+			}	
 			Timer.delay(.2);
 			while (!upperHall.returnReading()) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 				manualUpper(-.8);
 			}
 			while (!startHall.returnReading()) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 				manualUpper(-.75);
 				manualLower(.5);
 			}
 			stopLower();
 			while (!manualUpper(-.8)) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 			}
 			stopUpper();
 			System.out.println("Done.");
@@ -297,16 +307,25 @@ public class Lift {
 		if (state == State.START) {
 			System.out.println("Going to SCALE");
 			while (!manualLower(-.4)) {
-				SmartDashboard.putString("Up state:", "Lean back");
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 				manualUpper(.8);
 			}
 			while (!manualUpper(1)) {
-				SmartDashboard.putString("Up state:", "Rise");
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 			}
 			manualLower(.3);
 			Timer.delay(.1);
 			while (!startHall.returnReading()) {
-				SmartDashboard.putString("Up state:", "Straighten");
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
 				manualLower(.6);
 			}
 			stopLower();
@@ -320,8 +339,15 @@ public class Lift {
 	
 	public void start_ground() {
 		if (state == State.START) {
+			
 			System.out.println("Going to GROUND");
-			while (!manualLower(.5));
+			while (!manualLower(.5)) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.7);
+			}
 			stopLower();
 		} else {
 			System.out.println("Not in START position");
@@ -332,6 +358,11 @@ public class Lift {
 		if (state == State.GROUND) {
 			System.out.println("Going to START");
 			while (!startHall.returnReading()) { 
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.7);
 				manualLower(-.5);
 			}
 			stopLower();
@@ -344,8 +375,13 @@ public class Lift {
 		if (state == State.START) {
 			System.out.println("Going to SWITCH");
 			while (!switchHall.returnReading()) {
-				manualLower(-.4);
-				manualUpper(.8);
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.5);
+				manualLower(-.6);
+				manualUpper(1);
 			}
 			stopUpper();
 		} else {
@@ -359,14 +395,29 @@ public class Lift {
 			System.out.println("Going to START");
 
 			while (!upperHall.returnReading()) {
-				manualUpper(-.8);
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.5);
+				manualUpper(-1);
 			}
 			while (!startHall.returnReading()) {
-				manualUpper(-.75);
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.5);
+				manualUpper(-1);
 				manualLower(.5);
 			}
 			stopLower();
 			while (!manualUpper(-.8)) {
+				robot.xbox.refreshController();
+				if (robot.xbox.inputMenu) {
+					break;
+				}
+				robot.xbox.enableDrive(.5);
 			}
 			
 		} else {
